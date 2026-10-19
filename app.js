@@ -5,6 +5,7 @@ const path = require('path');
 
 const authRoutes = require('./routes/auth');
 const studentRoutes = require('./routes/student');
+const facultyRoutes = require('./routes/faculty');
 const { requireAuth } = require('./middleware/auth');
 
 const app = express();
@@ -27,10 +28,13 @@ app.use(session({
 // Routes
 app.use('/auth', authRoutes);
 app.use('/student', studentRoutes);
+app.use('/faculty', facultyRoutes);
 
 app.get('/', requireAuth, (req, res) => {
   if (req.session.user.role === 'student') {
     res.redirect('/student/dashboard');
+  } else if (req.session.user.role === 'faculty') {
+    res.redirect('/faculty/dashboard');
   } else {
     res.render('dashboard', { user: req.session.user });
   }

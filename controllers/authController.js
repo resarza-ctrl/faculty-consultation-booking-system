@@ -1,9 +1,9 @@
 const { body, validationResult } = require('express-validator');
 
-// Mock accounts
+// Mock accounts (faculty id matches facultyList so bookings link correctly)
 const mockAccounts = {
   student: { id: 1, username: 'student1', password: 'password123', role: 'student', name: 'Student One' },
-  faculty: { id: 2, username: 'faculty1', password: 'password123', role: 'faculty', name: 'Faculty One' }
+  faculty: { id: 1, username: 'faculty1', password: 'password123', role: 'faculty', name: 'Dr. John Smith', department: 'Computer Science' }
 };
 
 exports.getLogin = (req, res) => {

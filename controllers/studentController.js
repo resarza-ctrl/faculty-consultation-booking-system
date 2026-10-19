@@ -8,7 +8,7 @@ const facultyList = [
   { id: 4, name: 'Prof. Emily Davis', department: 'English' }
 ];
 
-// In-memory booking storage (using session as fallback, but also keep global for demo)
+// In-memory booking storage (shared across controllers for demo)
 let bookings = [];
 
 function getBookings() {
@@ -16,12 +16,15 @@ function getBookings() {
 }
 
 function addBooking(booking) {
-  booking.id = bookings.length + 1;
+  booking.id = bookings.length > 0 ? Math.max(...bookings.map(b => b.id)) + 1 : 1;
   booking.createdAt = new Date();
-  booking.status = 'pending';
+  booking.status = 'Pending';
   bookings.push(booking);
   return booking;
 }
+
+exports.getBookings = getBookings;
+exports.bookings = bookings;
 
 exports.getDashboard = (req, res) => {
   const userBookings = bookings.filter(b => b.studentId === req.session.user.id);
