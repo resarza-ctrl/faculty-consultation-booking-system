@@ -65,7 +65,15 @@
                         <td><%= booking.facultyName %></td>
                         <td><%= booking.facultyDept %></td>
                         <td><%= booking.subject %></td>
-                        <td><span class="badge bg-warning text-dark"><%= booking.status %></span></td>
+                        <td>
+                          <% if (booking.status === 'Approved') { %>
+                            <span class="badge bg-success"><%= booking.status %></span>
+                          <% } else if (booking.status === 'Rejected') { %>
+                            <span class="badge bg-danger"><%= booking.status %></span>
+                          <% } else { %>
+                            <span class="badge bg-warning text-dark"><%= booking.status %></span>
+                          <% } %>
+                        </td>
                       </tr>
                     <% }); %>
                   </tbody>
@@ -103,7 +111,15 @@
                         <td><%= booking.facultyName %></td>
                         <td><%= booking.facultyDept %></td>
                         <td><%= booking.subject %></td>
-                        <td><span class="badge bg-secondary"><%= booking.status %></span></td>
+                        <td>
+                          <% if (booking.status === 'Approved') { %>
+                            <span class="badge bg-success"><%= booking.status %></span>
+                          <% } else if (booking.status === 'Rejected') { %>
+                            <span class="badge bg-danger"><%= booking.status %></span>
+                          <% } else { %>
+                            <span class="badge bg-secondary"><%= booking.status %></span>
+                          <% } %>
+                        </td>
                       </tr>
                     <% }); %>
                   </tbody>
