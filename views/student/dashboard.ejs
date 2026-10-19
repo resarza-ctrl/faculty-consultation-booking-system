@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - Faculty Consultation Booking System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="/">Faculty Consultation Booking</a>
+      <div class="ms-auto">
+        <span class="navbar-text me-3">Welcome, <%= user.name %> (<%= user.role %>)</span>
+        <a href="/auth/logout" class="btn btn-outline-light btn-sm">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i><%= success %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <h3>Student Dashboard</h3>
+        <p class="text-muted">Manage your consultation bookings</p>
+      </div>
+      <div class="col-md-4 text-end">
+        <a href="/student/book" class="btn btn-primary">
+          <i class="bi bi-plus-circle me-2"></i>Book New Consultation
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="card shadow">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Upcoming Bookings</h5>
+          </div>
+          <div class="card-body">
+            <% if (upcomingBookings && upcomingBookings.length > 0) { %>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date & Time</th>
+                      <th>Faculty</th>
+                      <th>Department</th>
+                      <th>Subject/Reason</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% upcomingBookings.forEach(function(booking) { %>
+                      <tr>
+                        <td><strong><%= booking.date %></strong> at <%= booking.time %></td>
+                        <td><%= booking.facultyName %></td>
+                        <td><%= booking.facultyDept %></td>
+                        <td><%= booking.subject %></td>
+                        <td><span class="badge bg-warning text-dark"><%= booking.status %></span></td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            <% } else { %>
+              <p class="text-muted mb-0">No upcoming bookings. <a href="/student/book">Book your first consultation</a>.</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card shadow">
+          <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Past Bookings</h5>
+          </div>
+          <div class="card-body">
+            <% if (pastBookings && pastBookings.length > 0) { %>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date & Time</th>
+                      <th>Faculty</th>
+                      <th>Department</th>
+                      <th>Subject/Reason</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% pastBookings.forEach(function(booking) { %>
+                      <tr>
+                        <td><strong><%= booking.date %></strong> at <%= booking.time %></td>
+                        <td><%= booking.facultyName %></td>
+                        <td><%= booking.facultyDept %></td>
+                        <td><%= booking.subject %></td>
+                        <td><span class="badge bg-secondary"><%= booking.status %></span></td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            <% } else { %>
+              <p class="text-muted mb-0">No past bookings.</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
