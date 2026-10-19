@@ -4,6 +4,7 @@ const session = require('express-session');
 const path = require('path');
 
 const authRoutes = require('./routes/auth');
+const studentRoutes = require('./routes/student');
 const { requireAuth } = require('./middleware/auth');
 
 const app = express();
@@ -25,9 +26,14 @@ app.use(session({
 
 // Routes
 app.use('/auth', authRoutes);
+app.use('/student', studentRoutes);
 
 app.get('/', requireAuth, (req, res) => {
-  res.render('dashboard', { user: req.session.user });
+  if (req.session.user.role === 'student') {
+    res.redirect('/student/dashboard');
+  } else {
+    res.render('dashboard', { user: req.session.user });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
