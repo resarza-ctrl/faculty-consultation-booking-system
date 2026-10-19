@@ -1,116 +1,151 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Faculty Dashboard - Faculty Consultation Booking System</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="bg-light">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-      <a class="navbar-brand" href="/">Faculty Consultation Booking</a>
-      <div class="ms-auto">
-        <span class="navbar-text me-3">Welcome, <%= user.name %> (<%= user.role %>)</span>
-        <a href="/auth/logout" class="btn btn-outline-light btn-sm">Logout</a>
-      </div>
-    </div>
-  </nav>
+<%- include('../partials/head', { title: 'Faculty Dashboard' }) %>
+<%- include('../partials/navbar', { user: user, active: 'dashboard' }) %>
 
-  <div class="container mt-4">
-    <% if (typeof success !== 'undefined' && success) { %>
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i><%= success %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    <% } %>
+<%
+  var list = (typeof bookings !== 'undefined' && bookings) ? bookings : [];
+  var pendingList = list.filter(function (b) { return b.status === 'Pending'; });
+  var approvedList = list.filter(function (b) { return b.status === 'Approved'; });
+  var rejectedList = list.filter(function (b) { return b.status === 'Rejected'; });
+%>
 
-    <% if (typeof error !== 'undefined' && error) { %>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-circle-fill me-2"></i><%= error %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    <% } %>
+<%- include('../partials/toast', { success: typeof success !== 'undefined' ? success : null, error: typeof error !== 'undefined' ? error : null }) %>
 
-    <div class="row mb-4">
-      <div class="col-12">
-        <h3>Faculty Dashboard</h3>
-        <p class="text-muted">Manage consultation booking requests</p>
+<main class="app-main py-4">
+  <div class="container content-fade">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Consultation Requests</h1>
+        <p class="page-subtitle">Review, approve, or decline booking requests from students.</p>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge badge-pending py-2 px-3"><i class="bi bi-hourglass-split me-1"></i><%= pendingList.length %> awaiting review</span>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-12">
-        <div class="card shadow">
-          <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Booking Requests</h5>
+    <!-- Summary stat cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-head">
+            <span class="stat-icon stat-icon--navy"><i class="bi bi-inbox"></i></span>
           </div>
-          <div class="card-body">
-            <% if (bookings && bookings.length > 0) { %>
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>Date & Time</th>
-                      <th>Student</th>
-                      <th>Subject/Reason</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% bookings.forEach(function(booking) { %>
-                      <tr>
-                        <td><strong><%= booking.date %></strong> at <%= booking.time %></td>
-                        <td><%= booking.studentName %></td>
-                        <td><%= booking.subject %></td>
-                        <td>
-                          <% if (booking.status === 'Pending') { %>
-                            <span class="badge bg-warning text-dark"><%= booking.status %></span>
-                          <% } else if (booking.status === 'Approved') { %>
-                            <span class="badge bg-success"><%= booking.status %></span>
-                          <% } else if (booking.status === 'Rejected') { %>
-                            <span class="badge bg-danger"><%= booking.status %></span>
-                          <% } else { %>
-                            <span class="badge bg-secondary"><%= booking.status %></span>
-                          <% } %>
-                        </td>
-                        <td>
-                          <% if (booking.status === 'Pending') { %>
-                            <div class="d-flex gap-2">
-                              <form action="/faculty/booking/<%= booking.id %>/approve" method="POST" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-success" 
-                                  onclick="return confirm('Approve this booking request?')">
-                                  <i class="bi bi-check-circle me-1"></i>Approve
-                                </button>
-                              </form>
-                              <form action="/faculty/booking/<%= booking.id %>/reject" method="POST" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-danger"
-                                  onclick="return confirm('Reject this booking request?')">
-                                  <i class="bi bi-x-circle me-1"></i>Reject
-                                </button>
-                              </form>
-                            </div>
-                          <% } else { %>
-                            <span class="text-muted small">No actions available</span>
-                          <% } %>
-                        </td>
-                      </tr>
-                    <% }); %>
-                  </tbody>
-                </table>
-              </div>
-            <% } else { %>
-              <p class="text-muted mb-0">No booking requests yet.</p>
-            <% } %>
+          <div class="stat-value"><%= list.length %></div>
+          <div class="stat-label">Total Requests</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-head">
+            <span class="stat-icon stat-icon--amber"><i class="bi bi-hourglass-split"></i></span>
           </div>
+          <div class="stat-value"><%= pendingList.length %></div>
+          <div class="stat-label">Pending Approvals</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-head">
+            <span class="stat-icon stat-icon--green"><i class="bi bi-check2-circle"></i></span>
+          </div>
+          <div class="stat-value"><%= approvedList.length %></div>
+          <div class="stat-label">Approved Sessions</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-head">
+            <span class="stat-icon stat-icon--red"><i class="bi bi-x-circle"></i></span>
+          </div>
+          <div class="stat-value"><%= rejectedList.length %></div>
+          <div class="stat-label">Rejected</div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <!-- Requests table -->
+    <div class="card app-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title"><i class="bi bi-clipboard2-check"></i>Booking Requests</span>
+        <span class="count-chip"><%= list.length %> total</span>
+      </div>
+      <div class="card-body p-0">
+        <% if (list.length > 0) { %>
+          <div class="table-responsive">
+            <table class="table table-modern align-middle">
+              <thead>
+                <tr>
+                  <th>Date &amp; Time</th>
+                  <th>Student</th>
+                  <th>Reason / Subject</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% list.forEach(function(booking) { %>
+                  <tr>
+                    <td>
+                      <div class="cell-primary"><%= booking.date %></div>
+                      <span class="cell-sub"><i class="bi bi-clock"></i><%= booking.time %></span>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="avatar" style="width:32px;height:32px;font-size:.7rem;border:none;">
+                          <%= booking.studentName.split(' ').map(function(p){ return p[0]; }).join('').substring(0, 2).toUpperCase() %>
+                        </span>
+                        <span class="cell-primary"><%= booking.studentName %></span>
+                      </div>
+                    </td>
+                    <td><%= booking.subject %></td>
+                    <td>
+                      <% if (booking.status === 'Approved') { %>
+                        <span class="badge badge-approved"><i class="bi bi-check-circle me-1"></i>Approved</span>
+                      <% } else if (booking.status === 'Rejected') { %>
+                        <span class="badge badge-rejected"><i class="bi bi-x-circle me-1"></i>Rejected</span>
+                      <% } else { %>
+                        <span class="badge badge-pending"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+                      <% } %>
+                    </td>
+                    <td class="text-end">
+                      <% if (booking.status === 'Pending') { %>
+                        <div class="d-inline-flex gap-2">
+                          <form action="/faculty/booking/<%= booking.id %>/approve" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-approve"
+                              onclick="return confirm('Approve this booking request?')">
+                              <i class="bi bi-check-lg me-1"></i>Approve
+                            </button>
+                          </form>
+                          <form action="/faculty/booking/<%= booking.id %>/reject" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-reject"
+                              onclick="return confirm('Reject this booking request?')">
+                              <i class="bi bi-x-lg me-1"></i>Reject
+                            </button>
+                          </form>
+                        </div>
+                      <% } else { %>
+                        <span class="text-muted" style="font-size:.8rem;">
+                          <i class="bi bi-lock me-1"></i>Decided
+                        </span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <span class="empty-icon"><i class="bi bi-inbox"></i></span>
+            <p class="mb-2 fw-semibold text-navy">No booking requests yet</p>
+            <p class="small mb-0">Requests from students will show up here for review.</p>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<%- include('../partials/footer') %>

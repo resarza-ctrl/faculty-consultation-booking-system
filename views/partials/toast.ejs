@@ -1,0 +1,33 @@
+<% /* Flash toast partial — expects optional locals: success, error */ %>
+<%
+  var toastSuccess = (typeof success !== 'undefined' && success) ? success : null;
+  var toastError = (typeof error !== 'undefined' && error) ? error : null;
+%>
+<% if (toastSuccess || toastError) { %>
+  <div class="toast-container position-fixed top-0 end-0 p-3" id="flashToasts" style="z-index: 1100;">
+    <% if (toastSuccess) { %>
+      <div class="toast app-toast toast-success show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="4500">
+        <div class="toast-body d-flex align-items-start gap-2">
+          <span class="toast-icon toast-icon--success"><i class="bi bi-check-lg"></i></span>
+          <div class="flex-grow-1">
+            <div class="toast-title">Success</div>
+            <div class="toast-msg"><%= toastSuccess %></div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    <% } %>
+    <% if (toastError) { %>
+      <div class="toast app-toast toast-error show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+        <div class="toast-body d-flex align-items-start gap-2">
+          <span class="toast-icon toast-icon--error"><i class="bi bi-exclamation-lg"></i></span>
+          <div class="flex-grow-1">
+            <div class="toast-title">Heads up</div>
+            <div class="toast-msg"><%= toastError %></div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    <% } %>
+  </div>
+<% } %>
