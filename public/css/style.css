@@ -1,0 +1,16 @@
+body {
+  min-height: 100vh;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+}
+
+.btn-primary {
+  border-radius: 5px;
+}
+
+.form-control {
+  border-radius: 5px;
+}
